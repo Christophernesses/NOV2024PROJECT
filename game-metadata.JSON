@@ -1,0 +1,14 @@
+{
+    "title": "TURDUKKEN 3: The Final Quackdown",
+    "author": "Christopher Russell-Rivera, Samual LaMere",
+    "summary": "On a lovely day, a visitor at the local park threw a bread crumb into the water near two very hungry ducks, resulting in a quackdown for the ages! Playing as the ducks, battle your opponent in this retro-style fighting game to show who's in charge of the pond!",
+    "release_date": "2024-03-11",
+    "multiplayer": true,
+    "genres": [
+        "Action"
+    ],
+    "times_played": 0,
+    "last_played": 0,
+    "cover_image": "(string) .png/.jpg RELATIVE PATH TO THE COVER IMAGE OF YOUR GAME",
+    "exec": "game.py"
+}

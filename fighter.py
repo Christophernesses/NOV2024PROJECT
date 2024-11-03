@@ -1,7 +1,8 @@
 import pygame
 
 class Fighter():
-    def __init__(self, x, y, flip, data, spritesheet, animation_steps):
+    def __init__(self, player,  x, y, flip, data, spritesheet, animation_steps):
+        self.player = player
         self.size = data[0]
         self.offset = data[2]
         self.image_scale = data[1]
@@ -20,7 +21,7 @@ class Fighter():
         self.hit = False
         self.health = 100
         self.alive = True
-        self.attack_cooldown = 0
+        self.attack_cooldown = 10
         self.health = 100
         
     def load_images(self,spritesheet,animation_steps):
@@ -33,33 +34,51 @@ class Fighter():
             anim_list.append(img1list) 
         return anim_list
             
-    def move(self, screen_width, screen_height,surface, target):
-        SPEED=6
-        GRAVITY = 2
+    def move(self, screen_width, screen_height,surface, target, round_done):
+        SPEED=8
+        GRAVITY = 1.5
         dx = 0
         dy = 0
         self.running = False
         self.attack_type = 0
 
         key = pygame.key.get_pressed()
-        if self.attacking == False:
-            if key[pygame.K_a]:
-                dx = -SPEED
-                self.running = True
-            if key[pygame.K_d]:
-                dx = SPEED
-                self.running = True
-            if key[pygame.K_SPACE] and self.jump == False:
-                self.vely_y = -30
-                self.jump = True
+        if self.attacking == False and self.alive == True and round_done == False:
+            
+            if self.player == 1:             
+                if key[pygame.K_a]:
+                    dx = -SPEED
+                    self.running = True
+                if key[pygame.K_d]: 
+                    dx = SPEED
+                    self.running = True
+                if key[pygame.K_SPACE] and self.jump == False:
+                    self.vely_y = -30
+                    self.jump = True
 
-            if key[pygame.K_r] or key[pygame.K_t]:
-                self.attack(surface, target)
-                if key[pygame.K_r]:
-                    self.attack_type = 1
-                if key[pygame.K_t]:
-                    self.attack_type = 2
+                if key[pygame.K_r] or key[pygame.K_t]:
+                    self.attack(target)
+                    if key[pygame.K_r]:
+                        self.attack_type = 1
+                    if key[pygame.K_t]:
+                        self.attack_type = 2
+            if self.player == 2:
+                if key[pygame.K_LEFT]:
+                    dx = -SPEED
+                    self.running = True
+                if key[pygame.K_RIGHT]: 
+                    dx = SPEED
+                    self.running = True
+                if key[pygame.K_UP] and self.jump == False:
+                    self.vely_y = -30
+                    self.jump = True
 
+                if key[pygame.K_9] or key[pygame.K_0]:
+                    self.attack(target)
+                    if key[pygame.K_9]:
+                        self.attack_type = 1
+                    if key[pygame.K_0]:
+                        self.attack_type = 2
   
         self.vely_y += GRAVITY
         dy+= self.vely_y
@@ -92,6 +111,9 @@ class Fighter():
             self.update_action(6)
         elif self.hit == True:
             self.update_action(5)
+            pygame.mixer.Channel(1).play(pygame.mixer.Sound('Audio/PUNCHSVC.mp3'))
+
+
         elif self.attacking == True:
             if self.attack_type == 1:
                 self.update_action(3)
@@ -121,21 +143,15 @@ class Fighter():
                     self.hit = False
                     self.attacking = False
                     self.attack_cooldown = 5
-    def attack(self,surface, target):
+    def attack(self, target):
         if self.attack_cooldown == 0: 
             if self.jump == False:
                 self.attacking = True
-                attacking_rect = pygame.Rect(self.rect.centerx - (2*self.rect.width * self.flip),self.rect.y,2*self.rect.width,self.rect.height)
+                attacking_rect = pygame.Rect(self.rect.centerx - (self.rect.width/1.3 * self.flip),self.rect.y*1.1,self.rect.width/1.3,self.rect.height/1.3)
                 if attacking_rect.colliderect(target.rect):
                     target.health -= 7
                     target.hit = True
-                pygame.draw.rect(surface,(0,255,0),attacking_rect)
-
-        # pygame.joystick.init()
-        # if event.type == pygame.JOYDEVICEADDED:
-        #     print("Controller connected: "+str(event))
-        #     joy = pygame.j
-
+                
     def update_action(self,new_action):
         if new_action != self.action:
             self.action = new_action
@@ -144,5 +160,4 @@ class Fighter():
 
     def draw(self,surface):
         img = pygame.transform.flip(self.image, self.flip, False)
-        pygame.draw.rect(surface,(255,0,0),self.rect)
         surface.blit(img, (self.rect.x-self.offset[0], self.rect.y-self.offset[1]))
