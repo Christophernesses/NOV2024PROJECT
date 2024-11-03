@@ -5,7 +5,7 @@ from fighter import Fighter
 
 
 SCREEN_WIDTH = 1000
-SCREEN_HEIGHT = 800
+SCREEN_HEIGHT = 600
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Stream Flighter")
@@ -13,14 +13,17 @@ pygame.display.set_caption("Stream Flighter")
 clock = pygame.time.Clock()
 FPS = 60
 
-FRAME_SIZE = 256  
-FRAME_DATA = [FRAME_SIZE]
+FRAME_SIZE = 256
+FRAME_SCALE = 4
+FRAME_OFFSET = [420,400]
+FRAME_DATA = [FRAME_SIZE,FRAME_SCALE, FRAME_OFFSET]
+
 #background
-background_image = pygame.image.load("Graphics/Background/Pond1.webp").convert_alpha()
+background_image = pygame.image.load("Graphics/Background/city.jpg").convert_alpha()
 
 
-duck_anims = pygame.image.load("Graphics/Animations/Anims.jpg").convert_alpha()
-DUCK_STEPS = [20,21,31,20,17] #Idle,Walk,Jump,Attack1,Attack2
+duck_anims = pygame.image.load("Graphics/Animations/Anims.png").convert_alpha()
+DUCK_STEPS = [20,21,31,20,11,18,30] #Idle,Walk,Jump,Attack1,Attack2,Hit,Die
 
 
 
@@ -33,8 +36,8 @@ def draw_health(health,x,y):
     pygame.draw.rect(screen,(255,0,0),(x,y,400,30))
     pygame.draw.rect(screen,(255,255,0),(x,y,400*(health/100),30))
 
-fighter1 = Fighter(200,310, FRAME_DATA, duck_anims, DUCK_STEPS)
-fighter2 = Fighter(700,310, FRAME_DATA, duck_anims, DUCK_STEPS)
+fighter1 = Fighter(200,310, False, FRAME_DATA, duck_anims, DUCK_STEPS)
+fighter2 = Fighter(700,400, True, FRAME_DATA, duck_anims, DUCK_STEPS)
     
   
  
@@ -49,6 +52,9 @@ while True:
     
     fighter1.move(SCREEN_WIDTH,SCREEN_HEIGHT,screen,fighter2)
     
+    fighter1.update()
+    fighter2.update()
+
     
 
     fighter1.draw(screen)
